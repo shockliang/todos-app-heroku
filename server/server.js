@@ -98,6 +98,19 @@ app.patch('/todos/:id', (req, res) => {
 
 });
 
+// POST /users
+app.post('/users/',(req, res) => {
+    var body = _.pick(req.body, ['name', 'email','password']);
+    
+    var user = new User(body);
+
+    user.save().then((user) => {
+        res.send(user);
+    }).catch((e) => {
+        res.status(400).send(e);
+    });
+});
+
 app.listen(prot, () => {
     console.log(`Server started on port ${prot}`);
 });
