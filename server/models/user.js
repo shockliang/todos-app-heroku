@@ -49,7 +49,6 @@ UserSchema.methods.generateAuthToken = function() {
     user.tokens.push({access, token});
     
     return user.save().then(() => {
-        console.log('user.save.then token:',token);
         return token;
     });
 };
