@@ -130,26 +130,25 @@ app.get('/users/me', authenticate, (req, res) => {
 });
 
 // POST /users/login {email, password}
-app.post('/users/login', (req, res) => {
+app.post('/users/login', async (req, res) => {
     var body = _.pick(req.body, ['email', 'password']);
-    var user = new User(body);
-    
-    User.findByCredentials(body.email, body.password).then((user) => {
-        return user.generateAuthToken().then((token) => {
-            res.header('x-auth', token).send(user);
-        });
-    }).catch((e) => {
+    try {
+        const user = await User.findByCredentials(body.email, body.password);
+        const token = await user.generateAuthToken();
+        res.header('x-auth', token).send(user);
+    } catch (e) {
         res.status(400).send();
-    });
+    }
 });
 
 // DELETE /users/me/token
-app.delete('/users/me/token', authenticate, (req, res) => {
-    req.user.removeToken(req.token).then(() => {
+app.delete('/users/me/token', authenticate, async (req, res) => {
+    try {
+        await req.user.removeToken(req.token);
         res.status(200).send();
-    }, () => {
+    } catch (e) {
         res.status(400).send();
-    });
+    }
 });
 
 app.listen(prot, () => {
